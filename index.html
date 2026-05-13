@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合夥投資儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 300: '#86efac', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 900: '#14532d' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* 自訂捲軸 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <div class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- 頂部標題與頁籤 -->
+        <header class="mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 flex items-center gap-3">
+                        <i class="fa-solid fa-chart-pie text-brand-600"></i> 合夥投資儀表板
+                    </h1>
+                    <p class="text-slate-500 mt-1 text-sm">資料更新至：5/13 (包含新纖佈局與群創獲利)</p>
+                </div>
+                <div class="bg-white rounded-full p-1 shadow-sm border border-slate-200 flex text-sm font-medium w-full sm:w-auto">
+                    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="flex-1 sm:flex-none px-4 py-2 rounded-full bg-brand-50 text-brand-700 transition-colors">資產現況</button>
+                    <button onclick="switchTab('transactions')" id="btn-transactions" class="flex-1 sm:flex-none px-4 py-2 rounded-full text-slate-600 hover:bg-slate-50 transition-colors">交易流水帳</button>
+                    <button onclick="switchTab('charts')" id="btn-charts" class="flex-1 sm:flex-none px-4 py-2 rounded-full text-slate-600 hover:bg-slate-50 transition-colors">損益與圖表</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- 格式一：資產現況 -->
+            <div id="tab-dashboard" class="tab-content active">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- 共同帳戶卡片 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-brand-600 p-4 text-white flex justify-between items-center">
+                            <h2 class="font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-users"></i> 共同持有帳戶</h2>
+                            <span class="text-xs bg-white/20 px-2 py-1 rounded-md">合夥資金</span>
+                        </div>
+                        <div class="p-6 flex-grow">
+                            <div class="mb-6">
+                                <p class="text-sm text-slate-500 mb-1">目前可用現金餘額</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl font-bold text-slate-800">$30,265</span>
+                                    <span class="text-sm text-slate-500">TWD</span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-arrow-turn-up mr-1"></i>5/13 賣出樂事結清零股，並調整新纖、群創</p>
+                            </div>
+                            
+                            <h3 class="text-sm font-semibold text-slate-700 mb-3 border-b pb-2">庫存股票 <span class="text-xs font-normal text-brand-500 ml-2 animate-pulse"><i class="fa-solid fa-hand-pointer mr-1"></i>點擊查歷史</span></h3>
+                            <ul class="space-y-4">
+                                <li onclick="jumpToSearch('新纖')" class="cursor-pointer flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-brand-50 hover:ring-1 hover:ring-brand-300 transition-all shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">新纖</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800">新纖 (1409)</p>
+                                            <p class="text-xs text-slate-500">5/13 買入，每人2張 (成本約 $67,496)</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-slate-800">4,000 股</p>
+                                        <p class="text-xs text-slate-500">(共 4 張)</p>
+                                    </div>
+                                </li>
+                                <li onclick="jumpToSearch('聯電')" class="cursor-pointer flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-brand-50 hover:ring-1 hover:ring-brand-300 transition-all shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">聯電</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800">聯電 (2303)</p>
+                                            <p class="text-xs text-slate-500">4/11 買入 (總成本約 $91,480)</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-slate-800">2,000 股</p>
+                                        <p class="text-xs text-slate-500">(共 2 張)</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 余媽專戶卡片 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-slate-700 p-4 text-white flex justify-between items-center">
+                            <h2 class="font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-user"></i> 余媽個人專戶</h2>
+                            <span class="text-xs bg-white/20 px-2 py-1 rounded-md">獨立資金</span>
+                        </div>
+                        <div class="p-6 flex-grow">
+                            <div class="mb-6">
+                                <p class="text-sm text-slate-500 mb-1">目前帳面餘額</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl font-bold text-red-500">-$45,858</span>
+                                    <span class="text-sm text-slate-500">TWD</span>
+                                </div>
+                                <p class="text-xs text-red-400 mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>5/13 買新纖 3張餘額不足，需再入金增資</p>
+                            </div>
+
+                            <h3 class="text-sm font-semibold text-slate-700 mb-3 border-b pb-2">庫存股票</h3>
+                            <ul class="space-y-4">
+                                <li onclick="jumpToSearch('新纖')" class="cursor-pointer flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 shadow-sm transition-all">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">新纖</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800">新纖 (1409)</p>
+                                            <p class="text-xs text-slate-500">5/13 買入 3張</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-slate-800">3,000 股</p>
+                                    </div>
+                                </li>
+                                <li onclick="jumpToSearch('華邦電')" class="cursor-pointer flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 shadow-sm transition-all">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-sm">華邦</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800">華邦電 (2344)</p>
+                                            <p class="text-xs text-slate-500">4/16 買入 500股</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-slate-800">500 股</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-center justify-between p-3 bg-blue-50 border border-blue-100 rounded-xl shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 font-bold text-sm">台積</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800">台積電 (2330)</p>
+                                            <p class="text-xs text-blue-600 font-medium"><i class="fa-solid fa-circle-info mr-1"></i>產權備註：此250股全歸您所有</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-slate-800">250 股</p>
+                                        <p class="text-xs text-slate-500">(留存)</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 格式二：交易流水帳 -->
+            <div id="tab-transactions" class="tab-content bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50">
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="filterTable('all')" class="filter-btn active px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-800 text-white">全部</button>
+                        <button onclick="filterTable('buy')" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-slate-600 border hover:bg-slate-100">買進</button>
+                        <button onclick="filterTable('sell')" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-slate-600 border hover:bg-slate-100">賣出/增資</button>
+                    </div>
+                    <div class="relative w-full sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
+                        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="搜尋股票代號或名稱..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-sm">
+                                <th class="p-4 font-semibold w-20">日期</th>
+                                <th class="p-4 font-semibold w-24">帳戶</th>
+                                <th class="p-4 font-semibold w-20">動作</th>
+                                <th class="p-4 font-semibold w-48">標的/事由</th>
+                                <th class="p-4 font-semibold text-right w-32">收支金額</th>
+                                <th class="p-4 font-semibold text-right w-32">當時餘額</th>
+                                <th class="p-4 font-semibold">備註說明</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionBody" class="text-sm divide-y divide-slate-100">
+                            <!-- JS將動態填入資料 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 格式三：圖表分析 -->
+            <div id="tab-charts" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- 獲利長條圖 -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-money-bill-trend-up text-brand-500"></i> 已實現重點獲利 (合夥)</h3>
+                        <div class="relative h-64">
+                            <canvas id="profitChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-xs text-slate-500">
+                            *註：5/13 群創賣出獲利依據過往筆記 $13.5 成本估算。
+                        </div>
+                    </div>
+
+                    <!-- 資產分佈甜甜圈圖 -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-chart-donut text-indigo-500"></i> 共同帳戶資產分佈</h3>
+                        <div class="relative h-64 flex justify-center">
+                            <canvas id="assetChart"></canvas>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100">
+                            <h4 class="text-sm font-semibold text-slate-700 mb-2">合夥本金歷程回顧</h4>
+                            <ul class="text-xs text-slate-600 space-y-1.5">
+                                <li class="flex justify-between"><span class="text-slate-400">11/15 (不夠錢)</span> <span>每人增資 15,000 → 共 +30,000</span></li>
+                                <li class="flex justify-between"><span class="text-slate-400">12/03 (買群創不夠)</span> <span>每人增資 17,369 → 共 +34,738</span></li>
+                                <li class="flex justify-between font-medium text-slate-800"><span class="text-slate-500">兩次總計投入</span> <span>$64,738</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 交易資料 (包含最新的5/13操作)
+        const transactions = [
+            { date: "01/28", account: "共同", type: "buy", action: "買進", target: "群創 2張 (24.2)", amount: -48468, balance: "---", note: "合夥購買" },
+            { date: "03/16", account: "共同", type: "buy", action: "買進", target: "群創 1張 (28.0)", amount: -28039, balance: "85,522", note: "合夥購買" },
+            { date: "03/18", account: "共同", type: "sell", action: "賣出", target: "群創 2張 (27.75)", amount: 55254, balance: "64,269", note: "獲利 3,392 元" },
+            { date: "03/31", account: "余媽", type: "buy", action: "買進", target: "鴻海 250股 (191)", amount: -47818, balance: "---", note: "余媽個人" },
+            { date: "04/09", account: "余媽", type: "sell", action: "賣出", target: "鴻海 250股 (200)", amount: 49778, balance: "---", note: "余媽個人結清" },
+            { date: "04/11", account: "共同", type: "buy", action: "買進", target: "聯電 1張 (46.35)", amount: -46416, balance: "---", note: "合夥購買" },
+            { date: "04/11", account: "共同", type: "buy", action: "買進", target: "聯電 1張 (45.00)", amount: -45064, balance: "-6,656", note: "合夥購買，餘額變負" },
+            { date: "05/11", account: "共同", type: "add", action: "增資", target: "每人 15000", amount: 30000, balance: "23,344", note: "補足交割款" },
+            { date: "04/16", account: "余媽", type: "buy", action: "買進", target: "華邦電 500股 (89.9)", amount: -45014, balance: "4,764", note: "余媽目前餘額" },
+            { date: "05/13", account: "共同", type: "sell", action: "賣出", target: "群創 1張 (34.0)", amount: 33850, balance: "96,970", note: "單價34元賣出，估算扣手續費與稅" },
+            { date: "05/13", account: "共同", type: "buy", action: "買進", target: "新纖 4張 (16.85)", amount: -67496, balance: "29,474", note: "合夥買4張 (一人2張)" },
+            { date: "05/13", account: "共同", type: "sell", action: "賣出", target: "樂事綠能 36股 (22.05)", amount: 791, balance: "30,265", note: "零股結清" },
+            { date: "05/13", account: "余媽", type: "buy", action: "買進", target: "新纖 3張 (16.85)", amount: -50622, balance: "-45,858", note: "餘額不足，需再入金增資交割款" }
+        ];
+
+        let currentFilter = 'all';
+
+        function renderTable(data) {
+            const tbody = document.getElementById('transactionBody');
+            tbody.innerHTML = '';
+            
+            data.forEach(tx => {
+                // 決定文字顏色 (支出紅、收入綠)
+                const amountColor = tx.amount < 0 ? 'text-red-500' : 'text-brand-600';
+                const amountPrefix = tx.amount > 0 ? '+' : '';
+                const amountFormatted = amountPrefix + tx.amount.toLocaleString();
+                
+                // 標籤樣式
+                const actionBadge = tx.action === '買進' 
+                    ? '<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-medium">買進</span>'
+                    : (tx.action === '賣出' ? '<span class="bg-brand-50 text-brand-600 px-2 py-1 rounded text-xs font-medium">賣出</span>' : '<span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-medium">增資</span>');
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-4 text-slate-500">${tx.date}</td>
+                    <td class="p-4"><span class="${tx.account === '共同' ? 'text-indigo-600' : 'text-slate-700'} font-medium">${tx.account}</span></td>
+                    <td class="p-4">${actionBadge}</td>
+                    <td class="p-4 font-medium text-slate-800">${tx.target}</td>
+                    <td class="p-4 text-right font-bold ${amountColor}">${amountFormatted}</td>
+                    <td class="p-4 text-right text-slate-600">${tx.balance}</td>
+                    <td class="p-4 text-slate-500 text-xs">${tx.note}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTable(type) {
+            currentFilter = type;
+            
+            // 更新按鈕樣式
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white', 'active');
+                btn.classList.add('bg-white', 'text-slate-600');
+            });
+            event.target.classList.remove('bg-white', 'text-slate-600');
+            event.target.classList.add('bg-slate-800', 'text-white', 'active');
+
+            applyFilters();
+        }
+
+        function searchTable() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = transactions;
+
+            // 類別過濾
+            if (currentFilter === 'buy') {
+                filtered = filtered.filter(tx => tx.type === 'buy');
+            } else if (currentFilter === 'sell') {
+                filtered = filtered.filter(tx => tx.type === 'sell' || tx.type === 'add');
+            }
+
+            // 關鍵字搜尋
+            if (keyword) {
+                filtered = filtered.filter(tx => 
+                    tx.target.toLowerCase().includes(keyword) || 
+                    tx.note.toLowerCase().includes(keyword)
+                );
+            }
+
+            renderTable(filtered);
+        }
+
+        // 點擊股票跳轉並搜尋
+        function jumpToSearch(keyword) {
+            switchTab('transactions');
+            document.getElementById('searchInput').value = keyword;
+            applyFilters();
+        }
+
+        // 頁籤切換邏輯
+        function switchTab(tabId) {
+            // 隱藏所有內容
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // 取消所有按鈕狀態
+            document.querySelectorAll('header button').forEach(el => {
+                el.classList.remove('bg-brand-50', 'text-brand-700');
+                el.classList.add('text-slate-600');
+            });
+
+            // 顯示目標內容
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            // 設定按鈕狀態
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('text-slate-600');
+            activeBtn.classList.add('bg-brand-50', 'text-brand-700');
+
+            // 如果切換到圖表頁，渲染圖表
+            if (tabId === 'charts' && !window.chartsRendered) {
+                renderCharts();
+                window.chartsRendered = true;
+            }
+        }
+
+        // 繪製圖表
+        function renderCharts() {
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b';
+
+            // 圖表一：已實現獲利 (加入5/13群創估算)
+            const ctxProfit = document.getElementById('profitChart').getContext('2d');
+            new Chart(ctxProfit, {
+                type: 'bar',
+                data: {
+                    labels: ['3/18 賣群創(2張)', '2/12 賣群創(2張)', '5/13 賣群創(1張)'],
+                    datasets: [{
+                        label: '獲利金額 (TWD)',
+                        data: [3392, 7576, 20500], // 5/13 賣34.0, 成本若以13.5計, 賺20500
+                        backgroundColor: '#22c55e',
+                        borderRadius: 6,
+                        barPercentage: 0.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [2, 4], color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 圖表二：共同帳戶資產分佈甜甜圈圖
+            const ctxAsset = document.getElementById('assetChart').getContext('2d');
+            new Chart(ctxAsset, {
+                type: 'doughnut',
+                data: {
+                    labels: ['現金餘額', '聯電 2張(成本)', '新纖 4張(成本)'],
+                    datasets: [{
+                        data: [30265, 91480, 67496], 
+                        backgroundColor: [
+                            '#10b981', // 現金 綠色
+                            '#6366f1', // 聯電 紫色
+                            '#3b82f6'  // 新纖 藍色
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
+                    }
+                }
+            });
+        }
+
+        // 初始化
+        window.onload = () => {
+            renderTable(transactions);
+        };
+    </script>
+</body>
+</html>
