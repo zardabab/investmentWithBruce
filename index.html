@@ -65,10 +65,10 @@
                             <div class="mb-6">
                                 <p class="text-sm text-slate-500 mb-1">目前可用現金餘額</p>
                                 <div class="flex items-baseline gap-2">
-                                    <span class="text-3xl font-bold text-slate-800">$30,265</span>
+                                    <span class="text-3xl font-bold text-slate-800">$46,242</span>
                                     <span class="text-sm text-slate-500">TWD</span>
                                 </div>
-                                <p class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-arrow-turn-up mr-1"></i>5/13 賣出樂事結清零股，並調整新纖、群創</p>
+                                <p class="text-xs text-brand-600 mt-1"><i class="fa-solid fa-arrow-turn-up mr-1"></i>5/8 賣出華邦電入帳，合夥現金大進補</p>
                             </div>
                             
                             <h3 class="text-sm font-semibold text-slate-700 mb-3 border-b pb-2">庫存股票 <span class="text-xs font-normal text-brand-500 ml-2 animate-pulse"><i class="fa-solid fa-hand-pointer mr-1"></i>點擊查歷史</span></h3>
@@ -113,10 +113,10 @@
                             <div class="mb-6">
                                 <p class="text-sm text-slate-500 mb-1">目前帳面餘額</p>
                                 <div class="flex items-baseline gap-2">
-                                    <span class="text-3xl font-bold text-red-500">-$45,858</span>
+                                    <span class="text-3xl font-bold text-brand-600">$9,894</span>
                                     <span class="text-sm text-slate-500">TWD</span>
                                 </div>
-                                <p class="text-xs text-red-400 mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>5/13 買新纖 3張餘額不足，需再入金增資</p>
+                                <p class="text-xs text-brand-500 mt-1 font-medium"><i class="fa-solid fa-circle-check mr-1"></i>自動結算：5/8 華邦電獲利了結，買新纖3張免再增資！</p>
                             </div>
 
                             <h3 class="text-sm font-semibold text-slate-700 mb-3 border-b pb-2">庫存股票</h3>
@@ -131,18 +131,6 @@
                                     </div>
                                     <div class="text-right">
                                         <p class="font-bold text-slate-800">3,000 股</p>
-                                    </div>
-                                </li>
-                                <li onclick="jumpToSearch('華邦電')" class="cursor-pointer flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 shadow-sm transition-all">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-sm">華邦</div>
-                                        <div>
-                                            <p class="font-bold text-slate-800">華邦電 (2344)</p>
-                                            <p class="text-xs text-slate-500">4/16 買入 500股</p>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="font-bold text-slate-800">500 股</p>
                                     </div>
                                 </li>
                                 <li class="flex items-center justify-between p-3 bg-blue-50 border border-blue-100 rounded-xl shadow-sm">
@@ -243,12 +231,14 @@
             { date: "04/09", account: "余媽", type: "sell", action: "賣出", target: "鴻海 250股 (200)", amount: 49778, balance: "---", note: "余媽個人結清" },
             { date: "04/11", account: "共同", type: "buy", action: "買進", target: "聯電 1張 (46.35)", amount: -46416, balance: "---", note: "合夥購買" },
             { date: "04/11", account: "共同", type: "buy", action: "買進", target: "聯電 1張 (45.00)", amount: -45064, balance: "-6,656", note: "合夥購買，餘額變負" },
-            { date: "05/11", account: "共同", type: "add", action: "增資", target: "每人 15000", amount: 30000, balance: "23,344", note: "補足交割款" },
             { date: "04/16", account: "余媽", type: "buy", action: "買進", target: "華邦電 500股 (89.9)", amount: -45014, balance: "4,764", note: "余媽目前餘額" },
-            { date: "05/13", account: "共同", type: "sell", action: "賣出", target: "群創 1張 (34.0)", amount: 33850, balance: "96,970", note: "單價34元賣出，估算扣手續費與稅" },
-            { date: "05/13", account: "共同", type: "buy", action: "買進", target: "新纖 4張 (16.85)", amount: -67496, balance: "29,474", note: "合夥買4張 (一人2張)" },
-            { date: "05/13", account: "共同", type: "sell", action: "賣出", target: "樂事綠能 36股 (22.05)", amount: 791, balance: "30,265", note: "零股結清" },
-            { date: "05/13", account: "余媽", type: "buy", action: "買進", target: "新纖 3張 (16.85)", amount: -50622, balance: "-45,858", note: "餘額不足，需再入金增資交割款" }
+            { date: "05/08", account: "余媽", type: "sell", action: "賣出", target: "華邦電 500股 (112.0)", amount: 55752, balance: "60,516", note: "隨楊智傑帳戶同賣，獲利 10,738" },
+            { date: "05/08", account: "共同", type: "sell", action: "賣出", target: "華邦電 500股 (112.0)", amount: 55753, balance: "49,097", note: "合夥部分賣出，獲利 10,739" },
+            { date: "05/11", account: "共同", type: "add", action: "增資", target: "每人 15000", amount: 30000, balance: "79,097", note: "補足交割款" },
+            { date: "05/13", account: "共同", type: "sell", action: "賣出", target: "群創 1張 (34.0)", amount: 33850, balance: "112,947", note: "單價34元賣出，估算扣手續費與稅" },
+            { date: "05/13", account: "共同", type: "buy", action: "買進", target: "新纖 4張 (16.85)", amount: -67496, balance: "45,451", note: "合夥買4張 (一人2張)" },
+            { date: "05/13", account: "共同", type: "sell", action: "賣出", target: "樂事綠能 36股 (22.05)", amount: 791, balance: "46,242", note: "零股結清" },
+            { date: "05/13", account: "余媽", type: "buy", action: "買進", target: "新纖 3張 (16.85)", amount: -50622, balance: "9,894", note: "5/8華邦電獲利資金足以交割，免增資" }
         ];
 
         let currentFilter = 'all';
@@ -365,10 +355,10 @@
             new Chart(ctxProfit, {
                 type: 'bar',
                 data: {
-                    labels: ['3/18 賣群創(2張)', '2/12 賣群創(2張)', '5/13 賣群創(1張)'],
+                    labels: ['3/18 賣群創(2張)', '2/12 賣群創(2張)', '5/08 賣華邦電(總)', '5/13 賣群創(1張)'],
                     datasets: [{
                         label: '獲利金額 (TWD)',
-                        data: [3392, 7576, 20500], // 5/13 賣34.0, 成本若以13.5計, 賺20500
+                        data: [3392, 7576, 21477, 20500], // 5/13 賣34.0, 成本若以13.5計, 賺20500
                         backgroundColor: '#22c55e',
                         borderRadius: 6,
                         barPercentage: 0.5
@@ -392,7 +382,7 @@
                 data: {
                     labels: ['現金餘額', '聯電 2張(成本)', '新纖 4張(成本)'],
                     datasets: [{
-                        data: [30265, 91480, 67496], 
+                        data: [46242, 91480, 67496], 
                         backgroundColor: [
                             '#10b981', // 現金 綠色
                             '#6366f1', // 聯電 紫色
